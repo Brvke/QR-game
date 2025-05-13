@@ -7,7 +7,7 @@
   <style>
     body {
       font-family: Arial, sans-serif;
-      background: #f4f4f4;
+      background: linear-gradient(to right, #83a4d4, #b6fbff);
       padding: 20px;
       text-align: center;
     }
@@ -15,42 +15,67 @@
       max-width: 600px;
       margin: auto;
       background: #fff;
-      padding: 20px;
-      border-radius: 10px;
-      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+      padding: 30px;
+      border-radius: 15px;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.2);
     }
     .question {
-      font-size: 20px;
-      margin-bottom: 10px;
+      font-size: 22px;
+      font-weight: bold;
+      margin-bottom: 20px;
     }
     .answers button {
       display: block;
       margin: 10px auto;
-      padding: 10px 20px;
-      background: #007BFF;
+      padding: 12px 25px;
+      background: #28a745;
       color: white;
+      font-size: 16px;
       border: none;
-      border-radius: 5px;
+      border-radius: 8px;
       cursor: pointer;
+      transition: background 0.3s ease;
     }
     .answers button:hover {
-      background: #0056b3;
+      background: #218838;
     }
     .score {
-      font-size: 24px;
+      font-size: 26px;
       font-weight: bold;
       margin-top: 20px;
+    }
+    .celebration {
+      font-size: 28px;
+      color: #ff4081;
+      margin-top: 25px;
+      font-weight: bold;
+      animation: pop 1s ease-in-out infinite alternate;
+    }
+    @keyframes pop {
+      from { transform: scale(1); }
+      to { transform: scale(1.05); }
+    }
+    .confetti {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      pointer-events: none;
+      z-index: 1000;
     }
   </style>
 </head>
 <body>
   <div class="quiz-container">
-    <h1>Tech Knowledge Quiz</h1>
+    <h1>🚀 Tech Knowledge Quiz</h1>
     <div id="quiz">
       <div class="question" id="question"></div>
       <div class="answers" id="answers"></div>
     </div>
     <div class="score" id="score"></div>
+    <div class="celebration" id="celebration" style="display:none;">🎉 Congratulations! You completed the quiz! 🎉</div>
+    <canvas id="confettiCanvas" class="confetti"></canvas>
   </div>
 
   <script>
@@ -108,6 +133,10 @@
     const questionEl = document.getElementById("question");
     const answersEl = document.getElementById("answers");
     const scoreEl = document.getElementById("score");
+    const celebrationEl = document.getElementById("celebration");
+    const confettiCanvas = document.getElementById("confettiCanvas");
+    const ctx = confettiCanvas.getContext("2d");
+    let confetti = [];
 
     function showQuestion() {
       questionEl.innerText = questions[currentQuestion].question;
@@ -131,8 +160,43 @@
     }
 
     function showScore() {
-      quiz.innerHTML = "";
+      document.getElementById("quiz").innerHTML = "";
       scoreEl.innerText = `You scored ${score} out of ${questions.length}`;
+      celebrationEl.style.display = "block";
+      startConfetti();
+    }
+
+    function startConfetti() {
+      confettiCanvas.width = window.innerWidth;
+      confettiCanvas.height = window.innerHeight;
+      confetti = Array.from({ length: 150 }, () => ({
+        x: Math.random() * confettiCanvas.width,
+        y: Math.random() * confettiCanvas.height,
+        r: Math.random() * 6 + 4,
+        d: Math.random() * 20 + 10,
+        color: `hsl(${Math.random() * 360}, 100%, 50%)`,
+        tilt: Math.floor(Math.random() * 10) - 10,
+        tiltAngleIncrement: (Math.random() * 0.1) + 0.05,
+        tiltAngle: 0
+      }));
+      draw();
+    }
+
+    function draw() {
+      ctx.clearRect(0, 0, confettiCanvas.width, confettiCanvas.height);
+      confetti.forEach(c => {
+        c.tiltAngle += c.tiltAngleIncrement;
+        c.y += (Math.cos(c.d) + 3 + c.r / 2) / 2;
+        c.x += Math.sin(c.tiltAngle);
+        c.tilt = Math.sin(c.tiltAngle) * 15;
+        ctx.beginPath();
+        ctx.lineWidth = c.r / 2;
+        ctx.strokeStyle = c.color;
+        ctx.moveTo(c.x + c.tilt + c.r / 2, c.y);
+        ctx.lineTo(c.x + c.tilt, c.y + c.tilt + c.r);
+        ctx.stroke();
+      });
+      requestAnimationFrame(draw);
     }
 
     showQuestion();

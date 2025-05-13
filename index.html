@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Tech Quiz Game</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f4f4f4;
+      padding: 20px;
+      text-align: center;
+    }
+    .quiz-container {
+      max-width: 600px;
+      margin: auto;
+      background: #fff;
+      padding: 20px;
+      border-radius: 10px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    }
+    .question {
+      font-size: 20px;
+      margin-bottom: 10px;
+    }
+    .answers button {
+      display: block;
+      margin: 10px auto;
+      padding: 10px 20px;
+      background: #007BFF;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+    .answers button:hover {
+      background: #0056b3;
+    }
+    .score {
+      font-size: 24px;
+      font-weight: bold;
+      margin-top: 20px;
+    }
+  </style>
+</head>
+<body>
+  <div class="quiz-container">
+    <h1>Tech Knowledge Quiz</h1>
+    <div id="quiz">
+      <div class="question" id="question"></div>
+      <div class="answers" id="answers"></div>
+    </div>
+    <div class="score" id="score"></div>
+  </div>
+
+  <script>
+    const questions = [
+      {
+        question: "What does HTML stand for?",
+        answers: [
+          { text: "HyperText Markup Language", correct: true },
+          { text: "Hyperlink and Text Management Language", correct: false },
+          { text: "Home Tool Markup Language", correct: false },
+          { text: "Hyperlink Transfer Management Language", correct: false }
+        ]
+      },
+      {
+        question: "Which company developed the React library?",
+        answers: [
+          { text: "Google", correct: false },
+          { text: "Microsoft", correct: false },
+          { text: "Facebook", correct: true },
+          { text: "Amazon", correct: false }
+        ]
+      },
+      {
+        question: "What does CSS stand for?",
+        answers: [
+          { text: "Creative Style Sheets", correct: false },
+          { text: "Cascading Style Sheets", correct: true },
+          { text: "Computer Style Sheets", correct: false },
+          { text: "Colorful Style Syntax", correct: false }
+        ]
+      },
+      {
+        question: "Which language is primarily used for web scripting?",
+        answers: [
+          { text: "Java", correct: false },
+          { text: "Python", correct: false },
+          { text: "JavaScript", correct: true },
+          { text: "C++", correct: false }
+        ]
+      },
+      {
+        question: "Which HTML tag is used to define an internal style sheet?",
+        answers: [
+          { text: "<style>", correct: true },
+          { text: "<script>", correct: false },
+          { text: "<css>", correct: false },
+          { text: "<head>", correct: false }
+        ]
+      }
+    ];
+
+    let currentQuestion = 0;
+    let score = 0;
+
+    const questionEl = document.getElementById("question");
+    const answersEl = document.getElementById("answers");
+    const scoreEl = document.getElementById("score");
+
+    function showQuestion() {
+      questionEl.innerText = questions[currentQuestion].question;
+      answersEl.innerHTML = "";
+      questions[currentQuestion].answers.forEach(answer => {
+        const button = document.createElement("button");
+        button.innerText = answer.text;
+        button.addEventListener("click", () => handleAnswer(answer.correct));
+        answersEl.appendChild(button);
+      });
+    }
+
+    function handleAnswer(correct) {
+      if (correct) score++;
+      currentQuestion++;
+      if (currentQuestion < questions.length) {
+        showQuestion();
+      } else {
+        showScore();
+      }
+    }
+
+    function showScore() {
+      quiz.innerHTML = "";
+      scoreEl.innerText = `You scored ${score} out of ${questions.length}`;
+    }
+
+    showQuestion();
+  </script>
+</body>
+</html>
